@@ -1,0 +1,149 @@
+///////////////////////////////////
+プログラム仕様
+>外部仕様	
+>>動作の概要
+今回作成したプログラムはHHTPクライアントとサーバでjavaによって実装されたものである。
+>>ファイルの説明・コンパイル方法および実行方法
+ファイルはソースファイルとしてサーバをjava言語で記述したserver.javaとクライアントをjava言語で実装したclient.javaからなる。
+コンパイルと実行は以下のように行う。
+以下はサーバをコンパイル、実行する際の手順である。ここではまずソースファイルをコンパイルしてからmainメソッドを有するクラスであるServerクラスを実行している。また実行時にポート番号を指定している。
+katsumihisao-no-MacBook-Air% javac server.java 
+katsumihisao-no-MacBook-Air% java Server 30001
+以下はクライアントプログラムのコンパイル、実行の手順である。最初にソースファイルをコンパイルしてからmainメソッドを含むクラスであるClientクラスを実行している。
+
+
+>>コマンドライン引数の説明
+サーバ側では最初にサーバを起動する際に使用するポート番号を引数として必要になる。
+katsumihisao-no-MacBook-Air% java Server 30001
+クライアント側ではプログラムを実行する際にはコマンドライン引数は必要とされない。
+>>操作方法
+サーバ側では特に操作は必要としない。クライアント側では最初にプログラムが実行されると以下のようにプロンプトが表示される。
+Enter URL>>
+ここに以下のようにURLを入力するとコンテンツがサーバから送信されコマンドラインに出力される。
+Enter URL>>http://localhost:30001/demo/dir/check.html
+またコンテンツの送受信と出力が成功するとその後に以下のように送信されたコンテンツ内に含まれるリンクがリストの形で表示される。
+<-----------------Links from this page------------------->
+link(1)>> http://www.fos.kuis.kyoto-u.ac.jp/le2soft/
+link(2)>> http://localhost:30001/demo/dir/current.html
+link(3)>> http://localhost:30001/demo/dir/../one.html
+link(4)>> http://localhost:30001/demo/dir/../../two.html
+link(5)>> http://capital.hoge/
+link(6)>> http://attribute.hoge/
+link(7)>> http://localhost:30001/root.html
+link(8)>> http://this.is.comment/
+そして更にプロンプトが表示される。。
+If you want to go to these links, please enter "y".If not, please enter "n". >>
+ここではプロンプトのメッセージに従い以下のようにyもしくはnをコマンドラインに入力する。
+以下はnを入力した場合である。
+If you want to go to these links, please enter "y".If not, please enter "n". >>n
+すると再び最初に表示されたプロンプトが表示され、手順が最初に戻る。
+また先ほどのプロンプトで以下のようにyを入力すると
+If you want to go to these links, please enter "y".If not, please enter "n". >>y
+以下の様なプロンプトが表示される。
+Enter the link number >>
+このプロンプトに以下のように任意の数字を入力することでリンク一覧に表示されたリンクの番号に対応するリンクのコンテンツをサーバから取得することができる。
+Enter the link number >>3
+>>入力データの形式
+入力データは全てコマンドラインから文字列として入力する。
+>>出力データの形式，等々
+出力データはすべてコマンドラインに文字列とし表示される。
+
+>内部仕様
+/*クライアント*/
+>>クラス構成
+モジュールは主にClientクラスの他にBrowseクラスを作成した。Browseクラスは主にリンクの収集、表示に関する部分を担当する。
+>>各クラスの仕様
+	>クラス名
+	Client.class
+	>クラスの機能
+	サーバとの接続の確立などのHTTPクライアントの主な動作を担当する。
+
+	>クラス名
+	Browse.class
+	>クラスの機能
+	リンク一覧の取得や相対パスの絶対パスへの変換などを担当する。
+	
+/*サーバ*/
+>>クラス構成
+サーバはServerクラスとServerThreadクラスに別れる。
+>>各クラスの仕様
+	>クラス名
+	Server.class
+	>クラスの機能
+	クライアントとの接続を確立させるためにソケットを生成する。
+	>クラス名
+	ServerThread.class
+	>クラスの機能
+	複数クライアントからの処理を可能にするために設けられたクラス。
+///////////////////////////////////
+実行例、出力結果
+ここではクライアント側の実行例、実行結果についてのみ示す。
+
+katsumihisao-no-MacBook-Air% java Client      
+Enter URL>>http://localhost:30001/demo/one.html
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+  <title>ONE: LE2 Software Link Test Page</title>
+</head>
+<body bgcolor="white">
+
+OK!
+
+<a href="dir/check.html">BACK</a>
+
+</body></html>
+
+<-----------------Links from this page------------------->
+link(1)>> http://localhost:30001/demo/dir/check.html
+If you want to go to these links, please enter "y".If not, please enter "n". >>y
+Enter the link number >>1
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=shift_jis">
+
+//////////////////////中略////////////////////////
+
+http://localhost:XXXX/root.html
+</p>
+
+<p>Op 2. <a
+href="http://linebreak.hoge/">Aタグ中の改行</A>:<br />
+http://linebreak.hoge/</p>
+
+<!--
+<p><a href="http://this.is.comment/">コメント内のリンク</a></p>
+-->
+<p>*Op 3. （コメント内のリンク）:<br />
+http://this.is.comment/</p>
+
+</body>
+
+</html>
+
+<-----------------Links from this page------------------->
+link(1)>> http://www.fos.kuis.kyoto-u.ac.jp/le2soft/
+link(2)>> http://localhost:30001/demo/dir/current.html
+link(3)>> http://localhost:30001/demo/dir/../one.html
+link(4)>> http://localhost:30001/demo/dir/../../two.html
+link(5)>> http://capital.hoge/
+link(6)>> http://attribute.hoge/
+link(7)>> http://localhost:30001/root.html
+link(8)>> http://this.is.comment/
+If you want to go to these links, please enter "y".If not, please enter "n". >>n
+If you want to go to these links, please enter "y".If not, please enter "n". >>n
+Enter URL>>
+
+///////////////////////////////////
+評価、感想
+クライアント側でコンテンツの送受信が終了したあとも再びURL入力のプロンプトを表示してサーバにリクエストを送信できるような設計を考えてメソッド等を作成したが、余計なループが発生して上記に示したように
+If you want to go to these links, please enter "y".If not, please enter "n". >>
+とプロンプトが表示された際に、nを入力すると再び同じプロンプトが表示されてしまい、何度かnを入力すると正常な動作をするようなバグが発見されたがデバッグができなかったのが心残りである。どうやらリンク一覧からリンクに飛ぶという動作を繰り返した回数だけ、nの入力が必要になるようである。
+
+///////////////////////////////////
+参考文献
+ハーハート・シルト 著「独習C 第4版」
+中山清喬、国本大悟、高田ゲンキ 著「スッキリわかるJava入門」
+
